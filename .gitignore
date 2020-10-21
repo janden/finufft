@@ -30,3 +30,9 @@ test/testutils
 __pycache__*
 
 docs/_build
+
+*.gcda
+*.gcno
+*.gcov
+tracefile
+lcov
