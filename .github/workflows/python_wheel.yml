@@ -133,12 +133,25 @@ jobs:
 
   Windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install GCC and make
-      run: C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm make mingw-w64-x86_64-toolchain mingw-w64-x86_64-fftw"
+    - name: 'Setup MSYS2'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: false
+        install: >-
+          git
+          make
+          diffutils
+        pacboy: >-
+          toolchain:p
+          fftw:p
 
     - name: Build and Test Python 3.8
       uses: actions/setup-python@v2
