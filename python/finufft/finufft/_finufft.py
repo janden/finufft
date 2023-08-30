@@ -59,7 +59,7 @@ try:
             os.add_dll_directory(os.path.join(packages_dir, 'finufft'))
 
             full_lib_path = os.path.join(packages_dir,'finufft','libfinufft.dll')
-            winmode = 0
+            winmode = None
         else:
             full_lib_path = os.path.realpath(fh.name)
             winmode = None
