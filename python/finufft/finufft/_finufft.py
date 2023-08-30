@@ -39,7 +39,7 @@ c_longlong_p = ctypes.POINTER(c_longlong)
 lib = None
 # Try to load a local library directly.
 try:
-    lib = ctypes.cdll.LoadLibrary('libfinufft.so')
+    lib = ctypes.CDLL('libfinufft.so')
 except OSError:
     pass
 
@@ -67,7 +67,7 @@ try:
 
         # Load the library,
         #    which rpaths the libraries we care about.
-        lib = ctypes.cdll.LoadLibrary(full_lib_path, winmode=winmode)
+        lib = ctypes.CDLL(full_lib_path, winmode=winmode)
 except Exception:
     raise RuntimeError('Failed to find a suitable finufft library')
 
