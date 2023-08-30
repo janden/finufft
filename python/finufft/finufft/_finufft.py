@@ -21,6 +21,8 @@ with warnings.catch_warnings():
 
 import numpy as np
 
+from pathlib import Path
+
 from ctypes import c_double
 from ctypes import c_int
 from ctypes import c_float
@@ -49,10 +51,15 @@ try:
     if lib is None:
         # Find the library.
         fh = imp.find_module('finufft/finufftc')[0]
+        filename = fh.name
         # Get the full path for the ctypes loader.
         if platform.system() == 'Windows':
-            os.environ["PATH"] += os.pathsep + os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(fh.name))),'finufft')
-            full_lib_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(fh.name))),'finufft','libfinufft.dll')
+            packages_dir = Path(filename).resolve().parents[1]
+
+            print(packages_dir)
+
+            os.environ["PATH"] += os.pathsep + os.path.join(packages_dir,'finufft')
+            full_lib_path = os.path.join(packages_dir,'finufft','libfinufft.dll')
         else:
             full_lib_path = os.path.realpath(fh.name)
         fh.close()    # Be nice and close the open file handle.
