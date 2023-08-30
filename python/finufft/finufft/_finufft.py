@@ -56,17 +56,18 @@ try:
         if platform.system() == 'Windows':
             packages_dir = Path(filename).resolve().parents[1]
 
-            print(packages_dir)
+            os.add_dll_directory(os.path.join(packages_dir, 'finufft'))
 
-            os.environ["PATH"] += os.pathsep + os.path.join(packages_dir,'finufft')
             full_lib_path = os.path.join(packages_dir,'finufft','libfinufft.dll')
+            winmode = 0
         else:
             full_lib_path = os.path.realpath(fh.name)
+            winmode = None
         fh.close()    # Be nice and close the open file handle.
 
         # Load the library,
         #    which rpaths the libraries we care about.
-        lib = ctypes.cdll.LoadLibrary(full_lib_path)
+        lib = ctypes.cdll.LoadLibrary(full_lib_path, winmode=winmode)
 except Exception:
     raise RuntimeError('Failed to find a suitable finufft library')
 
