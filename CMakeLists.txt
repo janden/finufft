@@ -11,6 +11,11 @@ endif()
 
 include(CTest)
 
+# Set default build type to Release
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "ppc|ppc64|powerpc|powerpc64" OR (APPLE AND CMAKE_OSX_ARCHITECTURES MATCHES "ppc|ppc64"))
     # PowerPC arch does not have -march flag.
     set(FINUFFT_ARCH_FLAGS "-mtune=native" CACHE STRING "Compiler flags for specifying target architecture.")
@@ -26,6 +31,7 @@ option(FINUFFT_BUILD_EXAMPLES "Whether to build the FINUFFT examples" OFF)
 option(FINUFFT_BUILD_TESTS "Whether to build the FINUFFT tests" OFF)
 option(FINUFFT_BUILD_FORTRAN "Whether to build the FINUFFT Fortran examples" OFF)
 option(FINUFFT_BUILD_MATLAB "Whether to build the FINUFFT Matlab interface" OFF)
+option(FINUFFT_BUILD_PYTHON "Whether the python wrapper should be built." OFF)
 option(FINUFFT_ENABLE_SANITIZERS "Whether to enable sanitizers, only effective for Debug configuration." ON)
 option(FINUFFT_USE_OPENMP "Whether to use OpenMP for parallelization. If disabled, the finufft library will be single threaded. This does not affect the choice of FFTW library." ON)
 option(FINUFFT_USE_CUDA "Whether to build CUDA accelerated FINUFFT library (libcufinufft). This is completely independent of the main FINUFFT library" OFF)
@@ -172,7 +178,6 @@ if(FINUFFT_USE_CPU)
         set_finufft_options(finufft_f64_dll)
         target_link_libraries(finufft_f64_dll PUBLIC ${FINUFFT_FFTW_LIBRARIES})
     endif()
-
     add_library(finufft SHARED src/utils_precindep.cpp contrib/legendre_rule_fast.cpp)
     target_compile_definitions(finufft PRIVATE dll_EXPORTS FINUFFT_DLL)
     set_finufft_options(finufft)
@@ -239,6 +244,11 @@ endif ()
 
 if (FINUFFT_BUILD_MATLAB)
     add_subdirectory(matlab)
+endif ()
+
+if (FINUFFT_BUILD_PYTHON)
+    set(INSTALL_TARGETS "")
+    add_subdirectory(python/pyfinufft)
 endif ()
 
 include(GNUInstallDirs)
