@@ -178,6 +178,7 @@ if(FINUFFT_USE_CPU)
         set_finufft_options(finufft_f64_dll)
         target_link_libraries(finufft_f64_dll PUBLIC ${FINUFFT_FFTW_LIBRARIES})
     endif()
+
     add_library(finufft SHARED src/utils_precindep.cpp contrib/legendre_rule_fast.cpp)
     target_compile_definitions(finufft PRIVATE dll_EXPORTS FINUFFT_DLL)
     set_finufft_options(finufft)
@@ -248,7 +249,7 @@ endif ()
 
 if (FINUFFT_BUILD_PYTHON)
     set(INSTALL_TARGETS "")
-    add_subdirectory(python/pyfinufft)
+    add_subdirectory(python)
 endif ()
 
 include(GNUInstallDirs)
