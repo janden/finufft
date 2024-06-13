@@ -37,6 +37,7 @@ option(FINUFFT_USE_OPENMP "Whether to use OpenMP for parallelization. If disable
 option(FINUFFT_USE_CUDA "Whether to build CUDA accelerated FINUFFT library (libcufinufft). This is completely independent of the main FINUFFT library" OFF)
 option(FINUFFT_USE_CPU "Whether to build the ordinary FINUFFT library (libfinufft)." ON)
 option(FINUFFT_STATIC_LINKING "Whether to link the static FINUFFT library (libfinufft_static)." ON)
+option(FINUFFT_ENABLE_INSTALL "Wheter to enable installation of FINUFFT library" ON)
 # sphinx tag (don't remove): @cmake_opts_end
 
 if(FINUFFT_USE_CPU)
@@ -207,9 +208,10 @@ if(FINUFFT_USE_CPU)
     endif()
     target_include_directories(finufft_static PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-    file(GLOB FINUFFT_PUBLIC_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/finufft*.h")
-    set_target_properties(finufft PROPERTIES PUBLIC_HEADER "${FINUFFT_PUBLIC_HEADERS}")
-
+    if (FINUFFT_ENABLE_INSTALL)
+        file(GLOB FINUFFT_PUBLIC_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/finufft*.h")
+        set_target_properties(finufft PROPERTIES PUBLIC_HEADER "${FINUFFT_PUBLIC_HEADERS}")
+    endif()
     list(APPEND INSTALL_TARGETS finufft finufft_static)
 endif()
 
@@ -253,10 +255,10 @@ if (FINUFFT_BUILD_MATLAB)
 endif ()
 
 if (FINUFFT_BUILD_PYTHON)
-    set(INSTALL_TARGETS "")
     add_subdirectory(python)
 endif ()
 
+if (FINUFFT_ENABLE_INSTALL)
 include(GNUInstallDirs)
 install(TARGETS ${INSTALL_TARGETS} PUBLIC_HEADER)
 install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
@@ -284,3 +286,4 @@ if (FINUFFT_USE_CUDA)
     PATTERN "CMakeLists.txt" EXCLUDE
   )
 endif()
+endif ()
