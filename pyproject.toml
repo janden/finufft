@@ -1,6 +1,8 @@
 [build-system]
 requires = [
     "scikit-build-core >= 0.4.3",
+    "cmake >= 3.19",
+    "ninja >= 1.9.0",
 ]
 
 build-backend = "scikit_build_core.build"
@@ -18,10 +20,8 @@ dynamic = ["version"]
 minimum-version = "0.4"
 # Setuptools-style build caching in a local directory
 build-dir = "build/{wheel_tag}"
-
 cmake.targets = ["finufft"]
 cmake.define = {"FINUFFT_BUILD_PYTHON" = "ON", "FINUFFT_ENABLE_INSTALL" = "OFF"}
-
 wheel.packages = ["python/finufft/finufft"]
 
 [tool.scikit-build.metadata.version]
@@ -30,4 +30,4 @@ input = "python/finufft/finufft/__init__.py"
 
 [tool.cibuildwheel]
 # Necessary to see build output from the actual compilation
-build-verbosity = 1
+build-verbosity = 0
