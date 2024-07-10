@@ -83,6 +83,9 @@ jobs:
 
       - name: Install FFTW
         if: steps.cache-fftw.outputs.cache-hit != 'true'
+        env:
+          CC: clang-cl
+          CXX: clang-cl
         run: |
           Invoke-WebRequest -Uri "https://www.fftw.org/fftw-${{ env.fftw-version }}.tar.gz" -OutFile "${{ github.workspace }}\fftw.tar.gz"
 
@@ -106,7 +109,10 @@ jobs:
             FFTWDIR='${{ github.workspace }}\fftw'
             CC=clang-cl
             CXX=clang-cl
-          CIBW_BEFORE_BUILD: env
+          CIBW_BEFORE_BUILD: |
+            env
+            pip install delvewheel
+          CIBW_REPAIR_COMMAND: delvewheel show -v --analyze-existing -w {dest_dir} {wheel}
           CIBW_TEST_REQUIRES: pytest
           CIBW_TEST_COMMAND: pytest {project}/python/finufft/test
           # PyPy 3.10 triggers access violation under Windows, for some reason.
