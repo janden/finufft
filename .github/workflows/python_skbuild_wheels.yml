@@ -102,6 +102,9 @@ jobs:
           cmake --build "${{ github.workspace }}\fftw-build" --config Release
           cmake --install "${{ github.workspace }}\fftw-build"
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.1
         env:
