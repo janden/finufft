@@ -94,6 +94,8 @@ jobs:
           CIBW_ARCHS: AMD64
           CIBW_ENVIRONMENT: >
             FFTWDIR='${{ github.workspace }}\fftw'
+            CC='clang-cl'
+            CXX='clang-cl'
           CIBW_BEFORE_BUILD: pip install delvewheel
           CIBW_REPAIR_WHEEL_COMMAND: delvewheel repair -v --analyze-existing -w {dest_dir} {wheel}
           CIBW_TEST_REQUIRES: pytest
