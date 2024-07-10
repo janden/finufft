@@ -94,11 +94,11 @@ jobs:
           New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory
           tar --strip-components=1 -C "${{ github.workspace }}\fftw-source" -zxf "${{ github.workspace }}\fftw.tar.gz"
 
-          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -B "${{ github.workspace }}\fftw-build"
+          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -B "${{ github.workspace }}\fftw-build" -T ClangCL
           cmake --build "${{ github.workspace }}\fftw-build" --config Release
           cmake --install "${{ github.workspace }}\fftw-build"
 
-          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=ON -B "${{ github.workspace }}\fftw-build"
+          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=ON -B "${{ github.workspace }}\fftw-build" -T ClangCL
           cmake --build "${{ github.workspace }}\fftw-build" --config Release
           cmake --install "${{ github.workspace }}\fftw-build"
 
