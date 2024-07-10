@@ -87,6 +87,8 @@ jobs:
           CC: clang-cl
           CXX: clang-cl
         run: |
+          env
+
           Invoke-WebRequest -Uri "https://www.fftw.org/fftw-${{ env.fftw-version }}.tar.gz" -OutFile "${{ github.workspace }}\fftw.tar.gz"
 
           New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory
