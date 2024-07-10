@@ -84,7 +84,7 @@ jobs:
       - name: Install FFTW
         if: steps.cache-fftw.outputs.cache-hit != 'true'
         run: |
-          Invoke-WebRequest -Uri "https://www.fftw.org/fftw-${{ env.fftw-version}.tar.gz" -OutFile "${{ github.workspace }}\fftw.tar.gz"
+          Invoke-WebRequest -Uri "https://www.fftw.org/fftw-${{ env.fftw-version }}.tar.gz" -OutFile "${{ github.workspace }}\fftw.tar.gz"
 
           New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory
           tar --strip-components=1 -C "${{ github.workspace }}\fftw-source" -zxf "${{ github.workspace }}\fftw.tar.gz"
