@@ -72,7 +72,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache FFTW
+        id: cache-fftw
+        uses: actions/cache@v3
+        with:
+          path: "${{ github.workspace}}\fftw"
+          key: ${{ runner.os }}-build-fftw3.3.10
+
       - name: Install FFTW
+        if: steps.cache-fftw.outputs.cache-hit != 'true'
         run: |
           Invoke-WebRequest -Uri "https://www.fftw.org/fftw-3.3.10.tar.gz" -OutFile "${{ github.workspace }}\fftw.tar.gz"
 
