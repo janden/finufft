@@ -90,7 +90,7 @@ jobs:
           CIBW_ARCHS: AMD64
           CIBW_CONFIG_SETTINGS: "cmake.args='-G Ninja'"
           CIBW_ENVIRONMENT: >
-            FFTWDIR='c:\mingw64\include\fftw'
+            FFTWDIR='c:\mingw64'
           CIBW_BEFORE_BUILD: pip install delvewheel
           CIBW_REPAIR_COMMAND: delvewheel show -v --analyze-existing -w {dest_dir} {wheel}
           CIBW_TEST_REQUIRES: pytest
