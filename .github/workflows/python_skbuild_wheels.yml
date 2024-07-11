@@ -88,7 +88,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -G "Unix Makefiles" --verbose
+          cmake .. -G "Unix Makefiles"
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
