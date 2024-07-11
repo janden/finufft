@@ -84,6 +84,9 @@ jobs:
       - name: Which cmake
         run: which cmake
 
+      - name: pkg-config path
+        run: echo $PKG_CONFIG_PATH
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
