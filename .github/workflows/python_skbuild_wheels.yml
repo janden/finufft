@@ -80,11 +80,11 @@ jobs:
         run: |
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw"
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      - name: Install cibuildwheel
+        run: pip install cibuildwheel
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.19.1
+        run: cibuildwheel
         env:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_ARCHS: AMD64
