@@ -84,14 +84,14 @@ jobs:
       - name: Which python3
         run: python3 -c "import sys; print(sys.executable)"
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Run cmake
         run: |
           mkdir build
           cd build
           cmake .. -G "Unix Makefiles"
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
 
       - name: Run pip wheel
         run: pip wheel --no-deps '--config-settings=cmake.args=-G Unix Makefiles' -v .
