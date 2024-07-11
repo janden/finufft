@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build_wheels_unix:
+    if: false
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -36,6 +37,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_wheels_macos_arm64:
+    if: false
     name: Build wheels on macos-14
     runs-on: macos-14
 
@@ -103,9 +105,6 @@ jobs:
 
 
       - name: Build FFTW
-        env:
-          CC: /c/rtools44/ucrt64/bin/gcc
-          CXX: /c/rtools44/ucrt64/bin/g++
         run: |
           cmake -S "${{ github.workspace }}\fftw-source" -G "Unix Makefiles" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -D CMAKE_BUILD_TYPE=Release -B "${{ github.workspace }}\fftw-build"
           cmake --build "${{ github.workspace }}\fftw-build"
