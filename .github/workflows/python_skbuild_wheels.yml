@@ -84,7 +84,7 @@ jobs:
         run: |
           Invoke-WebRequest -Uri "https://www.fftw.org/fftw-${{ env.fftw-version }}.tar.gz" -OutFile "${{ github.workspace }}\fftw.tar.gz"
 
-          New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory
+          New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory | Out-Null
           tar --strip-components=1 -C "${{ github.workspace }}\fftw-source" -zxf "${{ github.workspace }}\fftw.tar.gz"
 
       - name: Build FFTW
