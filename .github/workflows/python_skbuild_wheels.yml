@@ -81,17 +81,13 @@ jobs:
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw"
           echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
 
-      - name: Which python3
-        run: python3 -c "import sys; print(sys.executable)"
-
-      - name: Which gcc
-        run: which gcc
-
-          #- name: Setup tmate session
-          #  uses: mxschmitt/action-tmate@v3
+        #- name: Setup tmate session
+        #  uses: mxschmitt/action-tmate@v3
 
       - name: Run pip wheel
         run: pip wheel --no-deps '--config-settings=cmake.args=-G Unix Makefiles' -v .
+        env:
+          CPATH: 'c:\msys64\mingw64\include'
 
       - name: Install cibuildwheel
         run: pip install cibuildwheel
