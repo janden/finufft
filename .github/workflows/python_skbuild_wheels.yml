@@ -77,8 +77,8 @@ jobs:
       - name: Install rtools
         run: |
           # mingw-w64
-          choco install rtools -y --no-progress --version=4.4.6104
-          echo "c:\rtools44\ucrt64\bin;" >> $env:GITHUB_PATH
+          choco install rtools -y --force --no-progress --version=4.0.0.20220206
+          echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
 
       - name: Download FFTW
         run: |
