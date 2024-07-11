@@ -85,6 +85,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
 
       - name: Run pip wheel
+        shell: bash
         run: pip wheel --no-deps '--config-settings=cmake.args=-G Unix Makefiles' -v .
 
       - name: Install cibuildwheel
