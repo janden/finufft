@@ -81,11 +81,8 @@ jobs:
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw"
           echo "c:\mingw64\bin;" >> $env:GITHUB_PATH
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Run pip wheel
-        run: pip wheel --no-deps '--config-settings=cmake.args=-G Ninja' -v .
+          #- name: Setup tmate session
+          #  uses: mxschmitt/action-tmate@v3
 
       - name: Install cibuildwheel
         run: pip install cibuildwheel
