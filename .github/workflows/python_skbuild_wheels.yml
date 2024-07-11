@@ -79,14 +79,12 @@ jobs:
       - name: Install dependencies
         run: C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm make cmake mingw-w64-x86_64-toolchain mingw-w64-x86_64-fftw git"
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.1
         env:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_ARCHS: AMD64
+          CIBW_CONFIG_SETTINGS: "cmake.args='-G Ninja'"
           CIBW_BEFORE_BUILD: |
             env
             pip install delvewheel
