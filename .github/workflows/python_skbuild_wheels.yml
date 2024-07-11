@@ -87,15 +87,30 @@ jobs:
           New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory | Out-Null
           tar --strip-components=1 -C "${{ github.workspace }}\fftw-source" -zxf "${{ github.workspace }}\fftw.tar.gz"
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Build FFTW
         run: |
-          cmake -S "${{ github.workspace }}\fftw-source" -G "Unix Makefiles" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -D CMAKE_BUILD_TYPE=Release -B "${{ github.workspace }}\fftw-build"
-          cmake --build "${{ github.workspace }}\fftw-build"
-          cmake --install "${{ github.workspace }}\fftw-build"
+          cd "${{ github.workspace }}\fftw-source"
+          ./configure --prefix="${{ github.workspace }}\fftw" --enable-avx2 --enable-openmp --enable-single --with-our-malloc
+          make -j
+          make install
 
-          cmake -S "${{ github.workspace }}\fftw-source" -G "Unix Makefiles" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=ON -D CMAKE_BUILD_TYPE=Relase -B "${{ github.workspace }}\fftw-build"
-          cmake --build "${{ github.workspace }}\fftw-build"
-          cmake --install "${{ github.workspace }}\fftw-build"
+          ./configure --prefix="${{ github.workspace }}\fftw" --enable-avx2 --enable-openmp --enable-double --with-our-malloc
+          make -j
+          make install
+
+
+          #      - name: Build FFTW
+          #        run: |
+          #          cmake -S "${{ github.workspace }}\fftw-source" -G "Unix Makefiles" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -D CMAKE_BUILD_TYPE=Release -B "${{ github.workspace }}\fftw-build"
+          #          cmake --build "${{ github.workspace }}\fftw-build"
+          #          cmake --install "${{ github.workspace }}\fftw-build"
+          #
+          #          cmake -S "${{ github.workspace }}\fftw-source" -G "Unix Makefiles" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=ON -D CMAKE_BUILD_TYPE=Relase -B "${{ github.workspace }}\fftw-build"
+          #          cmake --build "${{ github.workspace }}\fftw-build"
+          #          cmake --install "${{ github.workspace }}\fftw-build"
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
