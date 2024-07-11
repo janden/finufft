@@ -84,6 +84,12 @@ jobs:
       - name: Which python3
         run: python3 -c "import sys; print(sys.executable)"
 
+      - name: Run cmake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Unix Makefiles" --verbose
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
