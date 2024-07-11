@@ -74,18 +74,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache FFTW
-        id: cache-fftw
-        uses: actions/cache@v3
-        with:
-          path: "${{ github.workspace }}/fftw"
-          key: ${{ runner.os }}-build-fftw${{ env.fftw-version }}
+      - name: Install rtools
+        run: |
+          # mingw-w64
+          choco install rtools -y --no-progress --force --version=4.0.0.20220206
+          echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
 
       - name: Install FFTW
-        if: steps.cache-fftw.outputs.cache-hit != 'true'
-        env:
-          CC: clang-cl
-          CXX: clang-cl
         run: |
           env
 
@@ -94,13 +89,13 @@ jobs:
           New-Item -Path "${{ github.workspace }}" -Name "fftw-source" -ItemType Directory
           tar --strip-components=1 -C "${{ github.workspace }}\fftw-source" -zxf "${{ github.workspace }}\fftw.tar.gz"
 
-          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -B "${{ github.workspace }}\fftw-build" -T ClangCL
-          #cmake --build "${{ github.workspace }}\fftw-build" --config Release
-          #cmake --install "${{ github.workspace }}\fftw-build"
+          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=OFF -B "${{ github.workspace }}\fftw-build"
+          cmake --build "${{ github.workspace }}\fftw-build" --config Release
+          cmake --install "${{ github.workspace }}\fftw-build"
 
-          #cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=ON -B "${{ github.workspace }}\fftw-build" -T ClangCL
-          #cmake --build "${{ github.workspace }}\fftw-build" --config Release
-          #cmake --install "${{ github.workspace }}\fftw-build"
+          cmake -S "${{ github.workspace }}\fftw-source" -D CMAKE_INSTALL_PREFIX="${{ github.workspace }}\fftw" -D ENABLE_AVX2=ON -D BUILD_TESTS=OFF -D BUILD_SHARED_LIBS=OFF -D ENABLE_OPENMP=ON -D ENABLE_FLOAT=ON -B "${{ github.workspace }}\fftw-build"
+          cmake --build "${{ github.workspace }}\fftw-build" --config Release
+          cmake --install "${{ github.workspace }}\fftw-build"
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
@@ -112,8 +107,6 @@ jobs:
           CIBW_ARCHS: AMD64
           CIBW_ENVIRONMENT: >
             FFTWDIR='${{ github.workspace }}\fftw'
-            CC=clang-cl
-            CXX=clang-cl
           CIBW_BEFORE_BUILD: |
             env
             pip install delvewheel
