@@ -95,7 +95,7 @@ jobs:
         env:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_ARCHS: AMD64
-          CIBW_CONFIG_SETTINGS: "cmake.args='-G Ninja'"
+          CIBW_CONFIG_SETTINGS: "cmake.args='-G Unix Makefiles'"
           CIBW_BEFORE_BUILD: pip install delvewheel
           CIBW_REPAIR_COMMAND: delvewheel show -v --analyze-existing -w {dest_dir} {wheel}
           CIBW_TEST_REQUIRES: pytest
