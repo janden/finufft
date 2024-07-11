@@ -90,13 +90,14 @@ jobs:
           tar --strip-components=1 -C "${{ github.workspace }}\fftw-source" -zxf "${{ github.workspace }}\fftw.tar.gz"
 
       - name: Build FFTW
+        shell: bash
         run: |
           cd "${{ github.workspace }}\fftw-source"
-          configure --prefix="${{ github.workspace }}\fftw" --enable-avx2 --enable-openmp --enable-single --with-our-malloc
+          ./configure --prefix="${{ github.workspace }}\fftw" --enable-avx2 --enable-openmp --enable-single --with-our-malloc
           make -j
           make install
 
-          configure --prefix="${{ github.workspace }}\fftw" --enable-avx2 --enable-openmp --enable-double --with-our-malloc
+          ./configure --prefix="${{ github.workspace }}\fftw" --enable-avx2 --enable-openmp --enable-double --with-our-malloc
           make -j
           make install
 
