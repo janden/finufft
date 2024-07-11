@@ -79,6 +79,7 @@ jobs:
       - name: Install dependencies
         run: |
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw"
+          echo "c:\mingw64\bin;" >> $env:GITHUB_PATH
 
       - name: Install cibuildwheel
         run: pip install cibuildwheel
@@ -89,8 +90,6 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_ARCHS: AMD64
           CIBW_CONFIG_SETTINGS: "cmake.args='-G Ninja'"
-          CIBW_ENVIRONMENT: >
-            FFTWDIR='c:\mingw64'
           CIBW_BEFORE_BUILD: pip install delvewheel
           CIBW_REPAIR_COMMAND: delvewheel show -v --analyze-existing -w {dest_dir} {wheel}
           CIBW_TEST_REQUIRES: pytest
