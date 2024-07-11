@@ -74,14 +74,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Install rtools
         run: |
           # mingw-w64
-          choco install rtools -y --no-progress --force --version=4.4.6104
-          echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+          choco install rtools -y --no-progress --version=4.4.6104
+          echo "c:\rtools44\ucrt64\bin;" >> $env:GITHUB_PATH
 
       - name: Download FFTW
         run: |
