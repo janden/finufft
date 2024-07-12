@@ -81,31 +81,14 @@ jobs:
           C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw mingw-w64-x86_64-pkgconf"
           echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
 
-      - name: pkg-config path
-        run: echo $PKG_CONFIG_PATH
-
-      - name: Which pkg-config
-        run: which pkg-config
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Run pip wheel
-        run: pip wheel --no-deps '--config-settings=cmake.args=-G Unix Makefiles' -v .
-        env:
-          PKG_CONFIG_PATH: 'c:\msys64\mingw64\lib\pkgconfig;c:\msys64\mingw64\share\pkgconfig'
-
-      - name: Install cibuildwheel
-        run: pip install cibuildwheel
-
       - name: Build wheels
-        run: cibuildwheel
+        uses: pypa/cibuildwheel@v2.19.2
         env:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_ARCHS: AMD64
           CIBW_CONFIG_SETTINGS: "cmake.args='-G Unix Makefiles'"
           CIBW_BEFORE_BUILD: pip install delvewheel
-          CIBW_REPAIR_COMMAND: delvewheel show -v --analyze-existing -w {dest_dir} {wheel}
+          CIBW_REPAIR_WHEEL_COMMAND: delvewheel show -v --analyze-existing -w {dest_dir} {wheel}
           CIBW_TEST_REQUIRES: pytest
           CIBW_TEST_COMMAND: pytest {project}/python/finufft/test
           # PyPy 3.10 triggers access violation under Windows, for some reason.
