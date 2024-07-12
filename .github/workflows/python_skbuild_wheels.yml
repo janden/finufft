@@ -70,16 +70,14 @@ jobs:
   build_wheels_win:
     name: Build wheels on windows
     runs-on: windows-latest
-    env:
-      fftw-version: 3.3.10
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
-          echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
           c:\msys64\usr\bin\pacman.exe -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw mingw-w64-x86_64-pkgconf
+          echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.2
