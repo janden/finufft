@@ -78,14 +78,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw"
+          C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw mingw-w64-x86_64-pkgconf"
           echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
-
-      - name: Which cmake
-        run: which cmake
 
       - name: pkg-config path
         run: echo $PKG_CONFIG_PATH
+
+      - name: Which pkg-config
+        run: which pkg-config
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
