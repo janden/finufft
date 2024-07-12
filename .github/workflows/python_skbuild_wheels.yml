@@ -93,7 +93,7 @@ jobs:
       - name: Run pip wheel
         run: pip wheel --no-deps '--config-settings=cmake.args=-G Unix Makefiles' -v .
         env:
-          CPATH: 'c:\msys64\mingw64\include'
+          PKG_CONFIG_PATH: 'c:\msys64\mingw64\lib\pkgconfig;c:\msys64\mingw64\share\pkgconfig'
 
       - name: Install cibuildwheel
         run: pip install cibuildwheel
