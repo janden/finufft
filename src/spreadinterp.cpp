@@ -934,7 +934,6 @@ void interp_line(FLT *FINUFFT_RESTRICT target, const FLT *du, const FLT *ker,
 */
   using arch_t                       = typename simd_type::arch_type;
   static constexpr auto padding      = get_padding<FLT, 2 * ns>();
-  static constexpr auto alignment    = arch_t::alignment();
   static constexpr auto simd_size    = simd_type::size;
   static constexpr auto regular_part = (2 * ns + padding) & (-(2 * simd_size));
   std::array<FLT, 2> out{0};
@@ -1087,7 +1086,6 @@ void interp_square(FLT *FINUFFT_RESTRICT target, const FLT *du, const FLT *ker1,
   // no wrapping: avoid ptrs
   using arch_t                          = typename simd_type::arch_type;
   static constexpr auto padding         = get_padding<FLT, 2 * ns>();
-  static constexpr auto alignment       = arch_t::alignment();
   static constexpr auto simd_size       = simd_type::size;
   static constexpr uint8_t line_vectors = (2 * ns + padding) / simd_size;
   if (i1 >= 0 && i1 + ns <= N1 && i2 >= 0 && i2 + ns <= N2 &&
@@ -1252,9 +1250,7 @@ void interp_cube(FLT *FINUFFT_RESTRICT target, const FLT *du, const FLT *ker1,
 {
   using arch_t                          = typename simd_type::arch_type;
   static constexpr auto padding         = get_padding<FLT, 2 * ns>();
-  static constexpr auto alignment       = arch_t::alignment();
   static constexpr auto simd_size       = simd_type::size;
-  static constexpr auto ker23_size      = (ns + simd_size - 1) & -simd_size;
   static constexpr uint8_t line_vectors = (2 * ns + padding) / simd_size;
   const auto in_bounds_1                = (i1 >= 0) & (i1 + ns <= N1);
   const auto in_bounds_2                = (i2 >= 0) & (i2 + ns <= N2);
