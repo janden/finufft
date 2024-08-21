@@ -456,7 +456,7 @@ int spreadSorted(const BIGINT *sort_indices, UBIGINT N1, UBIGINT N2, UBIGINT N3,
       } // end main loop over subprobs
     }
     if (opts.debug)
-      printf("\tt1 fancy spread: \t%.3g s (%ld subprobs)\n", timer.elapsedsec(), nb);
+      printf("\tt1 fancy spread: \t%.3g s (%llu subprobs)\n", timer.elapsedsec(), nb);
   } // end of choice of which t1 spread type to use
   return 0;
 };
@@ -2264,7 +2264,7 @@ template<typename T> auto xsimd_to_array(const T &vec) noexcept {
 void print_subgrid_info(int ndims, BIGINT offset1, BIGINT offset2, BIGINT offset3,
                         UBIGINT padded_size1, UBIGINT size1, UBIGINT size2, UBIGINT size3,
                         UBIGINT M0) {
-  printf("size1 %ld, padded_size1 %ld\n", size1, padded_size1);
+  printf("size1 %llu, padded_size1 %llu\n", size1, padded_size1);
   switch (ndims) {
   case 1:
     printf("\tsubgrid: off %lld\t siz %lld\t #NU %lld\n", (long long)offset1,
