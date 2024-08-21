@@ -75,8 +75,10 @@ static FINUFFT_ALWAYS_INLINE FLT fold_rescale(FLT x, UBIGINT N) noexcept;
 template<class simd_type>
 FINUFFT_ALWAYS_INLINE static simd_type fold_rescale(const simd_type &x,
                                                     UBIGINT N) noexcept;
+template<uint8_t ns>
 static FINUFFT_ALWAYS_INLINE void set_kernel_args(
     FLT *args, FLT x, const finufft_spread_opts &opts) noexcept;
+template<uint8_t ns>
 static FINUFFT_ALWAYS_INLINE void evaluate_kernel_vector(
     FLT *ker, FLT *args, const finufft_spread_opts &opts) noexcept;
 template<uint8_t w, uint8_t upsampfact,
