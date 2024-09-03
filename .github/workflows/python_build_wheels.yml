@@ -96,7 +96,7 @@ jobs:
           # This is required to force cmake to avoid using MSVC (the default).
           # By setting the generator to Ninja, cmake will pick gcc (mingw64)
           # as the compiler.
-          CIBW_CONFIG_SETTINGS: "cmake.args='-G Ninja'"
+          CIBW_CONFIG_SETTINGS_WINDOWS: "cmake.args='-G Ninja'"
 
       - uses: actions/upload-artifact@v4
         with:
