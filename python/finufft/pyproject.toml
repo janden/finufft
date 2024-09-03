@@ -60,7 +60,7 @@ build-verbosity = 1
 skip = "pp* *musllinux*"
 test-requires = ["pytest", "pytest-mock"]
 test-command = "pytest {project}/python/finufft/test"
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = ""}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
 
 [tool.cibuildwheel.linux]
 archs = "x86_64"
