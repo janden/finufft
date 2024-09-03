@@ -60,10 +60,10 @@ build-verbosity = 1
 skip = "pp* *musllinux*"
 test-requires = ["pytest", "pytest-mock"]
 test-command = "pytest {project}/python/finufft/test"
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86_64", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86-64", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
 
 [tool.cibuildwheel.linux]
-archs = "x86-64"
+archs = "x86_64"
 before-all = "yum install -y fftw3-devel"
 
 [tool.cibuildwheel.windows]
