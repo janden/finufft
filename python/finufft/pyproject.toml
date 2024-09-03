@@ -75,4 +75,4 @@ repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {w
 
 [[tool.cibuildwheel.overrides]]
 select = "*arm64*"
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=arm64"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = ""}
