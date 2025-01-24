@@ -3,6 +3,9 @@
 #include <complex>
 #include <cufft.h>
 
+#include <iostream>
+#include <type_traits>
+
 #include <thrust/extrema.h>
 
 #include <cufinufft/contrib/helper_cuda.h>
@@ -44,8 +47,7 @@ int cufinufft2d1_exec(cuda_complex<T> *d_c, cuda_complex<T> *d_fk,
     d_fkstart   = d_fk + i * d_plan->batchsize * d_plan->ms * d_plan->mt;
     d_plan->c   = d_cstart;
     d_plan->fk  = d_fkstart;
-    if (d_plan->opts.gpu_spreadinterponly)
-        d_plan->fw = d_fkstart;
+    if (d_plan->opts.gpu_spreadinterponly) d_plan->fw = d_fkstart;
 
     // this is needed
     if ((ier = checkCudaErrors(cudaMemsetAsync(
@@ -58,9 +60,8 @@ int cufinufft2d1_exec(cuda_complex<T> *d_c, cuda_complex<T> *d_fk,
     if ((ier = cuspread2d<T>(d_plan, blksize))) return ier;
 
     // if spreadonly, skip the rest
-    if (d_plan->opts.gpu_spreadinterponly)
-        continue;
-    
+    if (d_plan->opts.gpu_spreadinterponly) continue;
+
     // Step 2: FFT
     cufftResult cufft_status =
         cufft_ex(d_plan->fftplan, d_plan->fw, d_plan->fw, d_plan->iflag);
@@ -106,25 +107,94 @@ int cufinufft2d2_exec(cuda_complex<T> *d_c, cuda_complex<T> *d_fk,
     d_plan->c  = d_cstart;
     d_plan->fk = d_fkstart;
 
+    if (std::is_same<T, float>::value) {
+      cuda_complex<T> out;
+
+      out = thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->fk,
+                           d_plan->fk + d_plan->ms * d_plan->mt,
+                           cuda_complex<T>({0.0, 0.0}), thrust::plus<cuda_complex<T>>());
+
+      std::cout << "Xa: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
+    }
+
+    if (std::is_same<T, float>::value) {
+      cuda_complex<T> out;
+
+      out = thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->c,
+                           d_plan->c + d_plan->M, cuda_complex<T>({0.0, 0.0}),
+                           thrust::plus<cuda_complex<T>>());
+
+      std::cout << "Xb: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
+    }
+
     // Skip steps 1 and 2 if interponly
     if (!d_plan->opts.gpu_spreadinterponly) {
-        // Step 1: amplify Fourier coeffs fk and copy into upsampled array fw
-        if (d_plan->opts.modeord == 0) {
-          if ((ier = cudeconvolve2d<T, 0>(d_plan, blksize))) return ier;
-        } else {
-          if ((ier = cudeconvolve2d<T, 1>(d_plan, blksize))) return ier;
-        }
+      // Step 1: amplify Fourier coeffs fk and copy into upsampled array fw
+      if (d_plan->opts.modeord == 0) {
+        if ((ier = cudeconvolve2d<T, 0>(d_plan, blksize))) return ier;
+      } else {
+        if ((ier = cudeconvolve2d<T, 1>(d_plan, blksize))) return ier;
+      }
 
-        // Step 2: FFT
-        cufftResult cufft_status =
-            cufft_ex(d_plan->fftplan, d_plan->fw, d_plan->fw, d_plan->iflag);
-        if (cufft_status != CUFFT_SUCCESS) return FINUFFT_ERR_CUDA_FAILURE;
-    }
-    else
-        d_plan->fw = d_fkstart;
-    
+      if (std::is_same<T, float>::value) {
+        cuda_complex<T> out;
+
+        out =
+            thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->fw,
+                           d_plan->fw + d_plan->nf1 * d_plan->nf2,
+                           cuda_complex<T>({0.0, 0.0}), thrust::plus<cuda_complex<T>>());
+
+        std::cout << "Xc: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
+      }
+
+      // Step 2: FFT
+      cufftResult cufft_status =
+          cufft_ex(d_plan->fftplan, d_plan->fw, d_plan->fw, d_plan->iflag);
+      if (cufft_status != CUFFT_SUCCESS) return FINUFFT_ERR_CUDA_FAILURE;
+      if (std::is_same<T, float>::value) {
+        cuda_complex<T> out;
+
+        out =
+            thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->fw,
+                           d_plan->fw + d_plan->nf1 * d_plan->nf2,
+                           cuda_complex<T>({0.0, 0.0}), thrust::plus<cuda_complex<T>>());
+
+        std::cout << "Xd: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
+
+        int out2;
+
+        out2 = thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->idxnupts,
+                              d_plan->idxnupts + d_plan->M, 0, thrust::plus<int>());
+
+        std::cout << "Xd2: " << out2 << std::endl;
+
+        T out3;
+
+        out3 = thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->kx,
+                              d_plan->kx + d_plan->M, 0.0, thrust::plus<T>());
+
+        std::cout << "Xd3: " << out3 << std::endl;
+
+        out3 = thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->ky,
+                              d_plan->ky + d_plan->M, 0.0, thrust::plus<T>());
+
+        std::cout << "Xd4: " << out3 << std::endl;
+      }
+    } else
+      d_plan->fw = d_fkstart;
+
     // Step 3: Interpolate
     if ((ier = cuinterp2d<T>(d_plan, blksize))) return ier;
+
+    if (std::is_same<T, float>::value) {
+      cuda_complex<T> out;
+
+      out = thrust::reduce(thrust::cuda::par.on(d_plan->stream), d_plan->c,
+                           d_plan->c + d_plan->M, cuda_complex<T>({0.0, 0.0}),
+                           thrust::plus<cuda_complex<T>>());
+
+      std::cout << "Xe: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
+    }
   }
 
   return 0;
@@ -149,6 +219,9 @@ int cufinufft2d3_exec(cuda_complex<T> *d_c, cuda_complex<T> *d_fk,
   cuda_complex<T> *d_cstart;
   cuda_complex<T> *d_fkstart;
   const auto stream = d_plan->stream;
+  // std::cout << "plan: " << d_plan << ", " << d_plan->t2_plan << std::endl;
+  // std::cout << "streams: " << d_plan->stream << ", " << d_plan->t2_plan->stream <<
+  // std::endl;
   for (int i = 0; i * d_plan->batchsize < d_plan->ntransf; i++) {
     int blksize = min(d_plan->ntransf - i * d_plan->batchsize, d_plan->batchsize);
     d_cstart    = d_c + i * d_plan->batchsize * d_plan->M;
@@ -168,6 +241,7 @@ int cufinufft2d3_exec(cuda_complex<T> *d_c, cuda_complex<T> *d_fk,
                         d_plan->prephase + d_plan->M, d_cstart + i * d_plan->M,
                         d_plan->c + i * d_plan->M, thrust::multiplies<cuda_complex<T>>());
     }
+
     // Step 1: Spread
     if ((ier = cuspread2d<T>(d_plan, blksize))) return ier;
     // now d_plan->fk = d_plan->fw contains the spread values
@@ -175,14 +249,50 @@ int cufinufft2d3_exec(cuda_complex<T> *d_c, cuda_complex<T> *d_fk,
     // type 2 goes from fk to c
     // saving the results directly in the user output array d_fk
     // it needs to do blksize transforms
+
+    if (std::is_same<T, float>::value) {
+      cuda_complex<T> out;
+      std::complex<T> buf[2];
+
+      out = thrust::reduce(thrust::cuda::par.on(stream), d_plan->fw,
+                           d_plan->fw + d_plan->nf, cuda_complex<T>({0.0, 0.0}),
+                           thrust::plus<cuda_complex<T>>());
+
+      buf[0] = *reinterpret_cast<std::complex<T> *>(&out);
+      cudaStreamSynchronize(stream);
+
+      std::cout << "X: " << buf[0] << std::endl;
+
+      std::cout << "nf: " << d_plan->nf1 << ", " << d_plan->nf2 << std::endl;
+      std::cout << "N: " << d_plan->N << std::endl;
+    }
     d_plan->t2_plan->ntransf = blksize;
     if ((ier = cufinufft2d2_exec<T>(d_fkstart, d_plan->fw, d_plan->t2_plan))) return ier;
+
+    if (std::is_same<T, float>::value) {
+      cuda_complex<T> out;
+
+      out = thrust::reduce(thrust::cuda::par.on(stream), d_fkstart, d_fkstart + d_plan->N,
+                           cuda_complex<T>({0.0, 0.0}), thrust::plus<cuda_complex<T>>());
+
+      std::cout << "Y: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
+    }
+
     // Step 3: deconvolve
     // now we need to d_fk = d_fk*d_plan->deconv
     for (int i = 0; i < blksize; i++) {
       thrust::transform(thrust::cuda::par.on(stream), d_plan->deconv,
                         d_plan->deconv + d_plan->N, d_fkstart + i * d_plan->N,
                         d_fkstart + i * d_plan->N, thrust::multiplies<cuda_complex<T>>());
+    }
+
+    if (std::is_same<T, float>::value) {
+      cuda_complex<T> out;
+
+      out = thrust::reduce(thrust::cuda::par.on(stream), d_fkstart, d_fkstart + d_plan->N,
+                           cuda_complex<T>({0.0, 0.0}), thrust::plus<cuda_complex<T>>());
+
+      std::cout << "Z: " << reinterpret_cast<std::complex<T> &>(out) << std::endl;
     }
   }
   return 0;

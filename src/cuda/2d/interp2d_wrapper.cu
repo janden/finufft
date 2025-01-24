@@ -1,10 +1,15 @@
 #include <iostream>
 
+#include <complex>
+#include <type_traits>
+
 #include <cuComplex.h>
 #include <cufinufft/contrib/helper_cuda.h>
 
 #include <cufinufft/common.h>
 #include <cufinufft/spreadinterp.h>
+
+#include <thrust/reduce.h>
 
 using namespace cufinufft::common;
 
@@ -28,6 +33,9 @@ int cuinterp2d(cufinufft_plan_t<T> *d_plan, int blksize)
   int nf1 = d_plan->nf1;
   int nf2 = d_plan->nf2;
   int M   = d_plan->M;
+
+  // std::cout << "method: " << d_plan->opts.gpu_method << std::endl;
+  // std::cout << "kerevalmeth: " << d_plan->opts.gpu_kerevalmeth << std::endl;
 
   int ier;
   switch (d_plan->opts.gpu_method) {
