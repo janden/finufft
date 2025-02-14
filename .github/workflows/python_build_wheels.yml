@@ -46,24 +46,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install cibuildwheel
-
       - name: Build finufft wheels
         run: |
-          python -m cibuildwheel  --package-dir python/finufft --output-dir wheelhouse
-        env:
-          CIBW_ENVIRONMENT_MACOS: >
-            MACOSX_DEPLOYMENT_TARGET=13
-          CIBW_ARCHS_MACOS: "arm64"
-          CIBW_ARCHS_LINUX: "x86_64"
-          CIBW_ARCHS_WINDOWS: "AMD64"
-          CIBW_BUILD_FRONTEND: "pip; args: \
+          python -m pip wheel python/finufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM="
-          CIBW_TEST_COMMAND: "echo 'No tests'"
       - name: Install cuda
         if: runner.os != 'macOS'  # Skip this step on macOS
         uses: Jimver/cuda-toolkit@v0.2.21
@@ -71,21 +61,13 @@ jobs:
           cuda: '11.4.0'
       - name: Build cufinufft wheels
         if: runner.os != 'macOS'  # Skip this step on macOS
-        uses: pypa/cibuildwheel@v2.22.0
-        with:
-          package-dir: 'python/cufinufft'
-          output-dir: wheelhouse
-        env:
-          CIBW_ARCHS_MACOS: "arm64"
-          CIBW_ARCHS_LINUX: "x86_64"
-          CIBW_ARCHS_WINDOWS: "AMD64"
-          CIBW_BUILD_FRONTEND: "pip; args: \
+        run: |
+          python -m pip wheel python/cufinufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM="
-          CIBW_TEST_COMMAND: "echo 'No tests'"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
