@@ -46,7 +46,7 @@ jobs:
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET=13
           CIBW_ARCHS_MACOS: "arm64"
-          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_ARCHS_LINUX: "native"
           CIBW_ARCHS_WINDOWS: "AMD64"
           CIBW_BUILD_FRONTEND: "pip; args: \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
