@@ -50,7 +50,7 @@ jobs:
 
       - name: Build finufft wheels
         run: |
-          python -m cibuildwheel --output-dir wheelhouse
+          python -m cibuildwheel  --package-dir python/finufft --output-dir wheelhouse
         env:
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET=13
