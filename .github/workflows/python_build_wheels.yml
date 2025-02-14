@@ -14,17 +14,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13, windows-2022]
+        os: [ubuntu-24.04, macos-13, windows-2022]
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             toolchain: gcc
             arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
+            cuda_flags: "-march=x86-64"
           - os: macos-13
             toolchain: llvm
             arch_flags: "-mcpu=apple-m3"
+            cuda_flags: "-mcpu=apple-m3"
           - os: windows-2022
             toolchain: llvm
-            arch_flags: "-march=x86-64_v2" # Windows11 requires avx2 so this should be fine
+            arch_flags: "-march=x86-64-v2" # Windows11 requires avx2 so this should be fine
+            cuda_flags: "/arch:SSE2"
     steps:
       - uses: actions/checkout@v4
       - name: Setup Cpp
@@ -53,6 +56,17 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
+      - name: install msvc on windows
+        if: runner.os == 'Windows'
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: msvc
+          vcvarsall: true
+          cmake: true
+          ninja: true
+          vcpkg: false
+          cppcheck: false
+          clangtidy: false
       - name: Install cuda
         if: runner.os != 'macOS'  # Skip this step on macOS
         uses: Jimver/cuda-toolkit@v0.2.21
@@ -64,7 +78,7 @@ jobs:
         run: |
           python -m pip wheel python/cufinufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
-            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
+            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.cuda_flags }} \
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
