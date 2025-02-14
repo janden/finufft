@@ -1,4 +1,4 @@
-name: Build and test Python wheels
+name: Build finufft wheels
 
 # testing only should be commented out in the final version
 on: [push, pull_request]
@@ -38,6 +38,7 @@ jobs:
           vcpkg: false
           cppcheck: false
           clangtidy: false
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
