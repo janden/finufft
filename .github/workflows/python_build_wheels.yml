@@ -53,8 +53,8 @@ jobs:
         env:
           CIBW_ARCHS: "all"
           CIBW_ENVIRONMENT: >
-            CC=${{ matrix.toolchain }},
-            CXX=${{ matrix.toolchain }}
+            CMAKE_C_COMPILER=${{ matrix.toolchain }}
+            CMAKE_CXX_COMPILER=${{ matrix.toolchain }}
             CMAKE_BUILD_TYPE=Release
             FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }}
             FINUFFT_USE_DUCC0=OFF
@@ -74,8 +74,8 @@ jobs:
         env:
           CIBW_ARCHS: "auto"
           CIBW_ENVIRONMENT: >
-            CC=${{ matrix.toolchain }},
-            CXX=${{ matrix.toolchain }}
+            CMAKE_C_COMPILER=${{ matrix.toolchain }},
+            CMAKE_CXX_COMPILER=${{ matrix.toolchain }}
             CMAKE_BUILD_TYPE=Release
             FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }}
             FINUFFT_USE_DUCC0=OFF
