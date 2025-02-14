@@ -21,7 +21,7 @@ jobs:
             toolchain: gcc
             arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
           - os: windows-2022
-            toolchain: msvc-2019
+            toolchain: msvc
             arch_flags: "/arch:SSE2" # Windows11 requires avx2 so this should be fine
     steps:
       - uses: actions/checkout@v4
@@ -71,6 +71,7 @@ jobs:
             -C cmake.define.CMAKE_GENERATOR_PLATFORM= \
             -C cmake.define.FINUFFT_CUDA_ARCHITECTURES=all-major
       - name: Delete unnecessary wheels
+        shell: bash
         run: |
           rm -f wheelhouse/*numpy*.whl
           rm -f wheelhouse/*packaging*.whl
