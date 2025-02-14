@@ -76,7 +76,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: aminya/setup-cpp@v1
         with:
-          compiler: msvc
+          compiler: msvc-2019
           vcvarsall: true
           cmake: true
           ninja: true
@@ -92,6 +92,7 @@ jobs:
         if: runner.os != 'macOS'  # Skip this step on macOS
         shell: bash
         run: |
+          CC=gcc-10 CXX=g++-10 \
           python -m pip wheel python/cufinufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.cuda_flags }} \
