@@ -18,7 +18,7 @@ jobs:
 #        python-version: [3.8, 3.9, 3.10, 3.11, 3.12, 3.13, pypy3.8, pypy3.9, pypy3.10, pypy3.11, pypy3.12, pypy3.13]
         include:
           - os: ubuntu-22.04
-            toolchain: gcc
+            toolchain: gcc-10
             arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
           - os: windows-2019
             toolchain: msvc
@@ -35,20 +35,6 @@ jobs:
           vcpkg: false
           cppcheck: false
           clangtidy: false
-      - name: use gcc-10 on linux
-        if: matrix.os == 'ubuntu-22.04'
-        run: |
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 60
-          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 60
-          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 60
-
-          sudo update-alternatives --set gcc /usr/bin/gcc-10
-          sudo update-alternatives --set g++ /usr/bin/g++-10
-          sudo update-alternatives --set cc /usr/bin/gcc
-          sudo update-alternatives --set c++ /usr/bin/g++
-          echo "gcc version: $(cc --version)"
-          echo "g++ version: $(c++ --version)"
       - name: Install cuda
         uses: Jimver/cuda-toolkit@v0.2.21
         with:
