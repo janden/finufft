@@ -55,7 +55,7 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM= \
-            -C cmake.define.FINUFFT_CUDA_ARCHITECTURES=all-major
+            -C cmake.define.FINUFFT_CUDA_ARCHITECTURES=sm_60;sm_70;sm_75;sm_80;sm_89;sm_90
       - name: Delete unnecessary wheels
         shell: bash
         run: |
