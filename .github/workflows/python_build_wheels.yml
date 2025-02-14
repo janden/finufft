@@ -57,6 +57,7 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
+          rm -rf build
       - name: install gcc10 on Linux
         if: runner.os == 'Linux'
         run: |
@@ -97,6 +98,7 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
+          rm -rf build
       - name: Delete unnecessary wheels
         run: |
           rm -f wheelhouse/*numpy*.whl
