@@ -50,8 +50,6 @@ jobs:
           CIBW_ARCHS_WINDOWS: "AMD64"
           CIBW_BUILD_FRONTEND: "pip; args: \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
-            -C cmake.define.CMAKE_C_COMPILER=cc \
-            -C cmake.define.CMAKE_CXX_COMPILER=c++ \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
@@ -74,8 +72,6 @@ jobs:
           CIBW_ARCHS_WINDOWS: "AMD64"
           CIBW_BUILD_FRONTEND: "pip; args: \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
-            -C cmake.define.CMAKE_C_COMPILER=cc\
-            -C cmake.define.CMAKE_CXX_COMPILER=c++ \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
