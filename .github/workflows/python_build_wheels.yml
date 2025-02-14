@@ -53,15 +53,15 @@ jobs:
         env:
           CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
           CIBW_ARCHS_LINUX: "x86_64 i686"
-          CIBW_ARCHS_WINDOWS: "x86_64"
+          CIBW_ARCHS_WINDOWS: "AMD64"
+          CIBW_BUILD_FRONTEND: "pip; args: -C cmake.define.CMAKE_BUILD_TYPE=Release \
+            -C cmake.define.CMAKE_C_COMPILER=${{ matrix.toolchain }} \
+            -C cmake.define.CMAKE_CXX_COMPILER=${{ matrix.toolchain }} \
+            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
+            -C cmake.define.FINUFFT_USE_DUCC0=OFF \
+            -C cmake.define.CMAKE_GENERATOR=Ninja \
+            -C cmake.define.CMAKE_GENERATOR_PLATFORM="
           CIBW_ENVIRONMENT: >
-            CMAKE_BUILD_TYPE=Release
-            CMAKE_C_COMPILER=${{ matrix.toolchain }}
-            CMAKE_CXX_COMPILER=${{ matrix.toolchain }}
-            FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }}
-            FINUFFT_USE_DUCC0=OFF
-            CMAKE_GENERATOR=Ninja
-            CMAKE_GENERATOR_PLATFORM=
             MACOSX_DEPLOYMENT_TARGET=13
       - name: Install cuda
         if: runner.os != 'macOS'  # Skip this step on macOS
@@ -75,14 +75,13 @@ jobs:
           package-dir: 'python/cufinufft'
         env:
           CIBW_ARCHS: "auto"
-          CIBW_ENVIRONMENT: >
-            CMAKE_BUILD_TYPE=Release
-            CMAKE_C_COMPILER=${{ matrix.toolchain }},
-            CMAKE_CXX_COMPILER=${{ matrix.toolchain }}
-            FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }}
-            FINUFFT_USE_DUCC0=OFF
-            CMAKE_GENERATOR=Ninja
-            CMAKE_GENERATOR_PLATFORM=
+          CIBW_BUILD_FRONTEND: "pip; args: -C cmake.define.CMAKE_BUILD_TYPE=Release \
+            -C cmake.define.CMAKE_C_COMPILER=${{ matrix.toolchain }} \
+            -C cmake.define.CMAKE_CXX_COMPILER=${{ matrix.toolchain }} \
+            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
+            -C cmake.define.FINUFFT_USE_DUCC0=OFF \
+            -C cmake.define.CMAKE_GENERATOR=Ninja \
+            -C cmake.define.CMAKE_GENERATOR_PLATFORM="
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
