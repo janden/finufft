@@ -51,11 +51,13 @@ jobs:
         with:
           package-dir: 'python/finufft'
         env:
-          CIBW_ARCHS: "all"
+          CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
+          CIBW_ARCHS_LINUX: "x86_64 i686"
+          CIBW_ARCHS_WINDOWS: "x86_64"
           CIBW_ENVIRONMENT: >
+            CMAKE_BUILD_TYPE=Release
             CMAKE_C_COMPILER=${{ matrix.toolchain }}
             CMAKE_CXX_COMPILER=${{ matrix.toolchain }}
-            CMAKE_BUILD_TYPE=Release
             FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }}
             FINUFFT_USE_DUCC0=OFF
             CMAKE_GENERATOR=Ninja
@@ -74,9 +76,9 @@ jobs:
         env:
           CIBW_ARCHS: "auto"
           CIBW_ENVIRONMENT: >
+            CMAKE_BUILD_TYPE=Release
             CMAKE_C_COMPILER=${{ matrix.toolchain }},
             CMAKE_CXX_COMPILER=${{ matrix.toolchain }}
-            CMAKE_BUILD_TYPE=Release
             FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }}
             FINUFFT_USE_DUCC0=OFF
             CMAKE_GENERATOR=Ninja
