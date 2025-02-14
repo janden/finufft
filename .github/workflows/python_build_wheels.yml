@@ -45,7 +45,7 @@ jobs:
           CIBW_ARCHS_MACOS: "arm64"
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_WINDOWS: "AMD64"
-          CIBW_BUILD_FRONTEND: "pip; args: --outdir wheelhouse --verbose \
+          CIBW_BUILD_FRONTEND: "pip; args: --verbose \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.CMAKE_C_COMPILER=${{ matrix.toolchain }} \
             -C cmake.define.CMAKE_CXX_COMPILER=${{ matrix.toolchain }} \
@@ -69,7 +69,7 @@ jobs:
           CIBW_ARCHS_MACOS: "arm64"
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_WINDOWS: "AMD64"
-          CIBW_BUILD_FRONTEND: "pip; args: --outdir wheelhouse --verbose \
+          CIBW_BUILD_FRONTEND: "pip; args: --verbose \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.CMAKE_C_COMPILER=${{ matrix.toolchain }} \
             -C cmake.define.CMAKE_CXX_COMPILER=${{ matrix.toolchain }} \
