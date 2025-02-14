@@ -14,13 +14,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-2022]
+        os: [ubuntu-22.04, windows-2019]
 #        python-version: [3.8, 3.9, 3.10, 3.11, 3.12, 3.13, pypy3.8, pypy3.9, pypy3.10, pypy3.11, pypy3.12, pypy3.13]
         include:
           - os: ubuntu-22.04
             toolchain: gcc
             arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
-          - os: windows-2022
+          - os: windows-2019
             toolchain: msvc
             arch_flags: "/arch:SSE2" # Windows11 requires avx2 so this should be fine
     steps:
