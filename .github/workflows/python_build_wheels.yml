@@ -57,21 +57,6 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
-          rm -rf build
-      - name: install gcc10 on Linux
-        if: runner.os == 'Linux'
-        run: |
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 60
-          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 60
-          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 60
-
-          sudo update-alternatives --set gcc /usr/bin/gcc-10
-          sudo update-alternatives --set g++ /usr/bin/g++-10
-          sudo update-alternatives --set cc /usr/bin/gcc
-          sudo update-alternatives --set c++ /usr/bin/g++
-          echo "gcc version: $(cc --version)"
-          echo "g++ version: $(c++ --version)"
       - name: install msvc on windows
         if: runner.os == 'Windows'
         uses: aminya/setup-cpp@v1
@@ -87,7 +72,7 @@ jobs:
         if: runner.os != 'macOS'  # Skip this step on macOS
         uses: Jimver/cuda-toolkit@v0.2.21
         with:
-          cuda: '11.4.0'
+          cuda: '11.4.1' # to use gcc-11
       - name: Build cufinufft wheels
         if: runner.os != 'macOS'  # Skip this step on macOS
         shell: bash
@@ -98,6 +83,7 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
+            -C cmake.define.FINUFFT_CUDA_ARCHITECTURES=all-major
           rm -rf build
       - name: Delete unnecessary wheels
         run: |
