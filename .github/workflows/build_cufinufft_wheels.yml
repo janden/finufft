@@ -9,26 +9,20 @@ on: [push, pull_request]
 #      - 'v*'  # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
-  build_wheels_unix:
+  build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13, windows-2022]
+        os: [ubuntu-22.04, windows-2022]
 #        python-version: [3.8, 3.9, 3.10, 3.11, 3.12, 3.13, pypy3.8, pypy3.9, pypy3.10, pypy3.11, pypy3.12, pypy3.13]
         include:
           - os: ubuntu-22.04
             toolchain: gcc
             arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
-            cuda_flags: "-march=x86-64"
-          - os: macos-13
-            toolchain: llvm
-            arch_flags: "-mcpu=apple-m3"
-            cuda_flags: "-mcpu=apple-m3"
           - os: windows-2022
-            toolchain: llvm
-            arch_flags: "-march=x86-64-v2" # Windows11 requires avx2 so this should be fine
-            cuda_flags: "/arch:SSE2"
+            toolchain: msvc-2019
+            arch_flags: "/arch:SSE2" # Windows11 requires avx2 so this should be fine
     steps:
       - uses: actions/checkout@v4
       - name: Setup Cpp
@@ -41,6 +35,10 @@ jobs:
           vcpkg: false
           cppcheck: false
           clangtidy: false
+      - name: Install cuda
+        uses: Jimver/cuda-toolkit@v0.2.21
+        with:
+          cuda: '11.4.0'
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -48,18 +46,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-      - name: Build finufft wheels
-        shell: bash
-        run: |
-          python -m pip wheel python/finufft/ --wheel-dir=wheelhouse \
-            -C cmake.define.CMAKE_BUILD_TYPE=Release \
-            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
-            -C cmake.define.FINUFFT_USE_DUCC0=OFF \
-            -C cmake.define.CMAKE_GENERATOR=Ninja \
-            -C cmake.define.CMAKE_GENERATOR_PLATFORM=
-          rm -rf build
-      - name: install gcc10 on Linux
-        if: runner.os == 'Linux'
+      - name: use gcc-10 on linux
+        if: matrix.os == 'ubuntu-22.04'
         run: |
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 60
@@ -72,35 +60,16 @@ jobs:
           sudo update-alternatives --set c++ /usr/bin/g++
           echo "gcc version: $(cc --version)"
           echo "g++ version: $(c++ --version)"
-      - name: install msvc on windows
-        if: runner.os == 'Windows'
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: msvc-2019
-          vcvarsall: false
-          cmake: true
-          ninja: true
-          vcpkg: false
-          cppcheck: false
-          clangtidy: false
-      - name: Install cuda
-        if: runner.os != 'macOS'  # Skip this step on macOS
-        uses: Jimver/cuda-toolkit@v0.2.21
-        with:
-          cuda: '11.4.0'
       - name: Build cufinufft wheels
-        if: runner.os != 'macOS'  # Skip this step on macOS
         shell: bash
         run: |
-          CC=gcc-10 CXX=g++-10 \
           python -m pip wheel python/cufinufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
-            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.cuda_flags }} \
+            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM= \
             -C cmake.define.FINUFFT_CUDA_ARCHITECTURES=all-major
-          rm -rf build
       - name: Delete unnecessary wheels
         run: |
           rm -f wheelhouse/*numpy*.whl
