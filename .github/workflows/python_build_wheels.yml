@@ -27,12 +27,6 @@ jobs:
             arch_flags: "-march=x86-64_v2" # Windows11 requires avx2 so this should be fine
     steps:
       - uses: actions/checkout@v4
-      - name: Install cuda
-        if: runner.os != 'macOS'  # Skip this step on macOS
-        uses: Jimver/cuda-toolkit@v0.2.21
-        with:
-          cuda: '11.4.0'
-          method: 'network'
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -59,7 +53,25 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
-
+      # Required for CUDA
+      - name: Set up GCC 11
+        shell: bash
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 60
+          sudo update-alternatives --set gcc /usr/bin/gcc-11
+          sudo update-alternatives --set g++ /usr/bin/g++-11
+      - name: Install cuda
+        if: runner.os != 'macOS'  # Skip this step on macOS
+        uses: Jimver/cuda-toolkit@v0.2.21
+        with:
+          cuda: '11.4.0'
       - name: Build cufinufft wheels
         if: runner.os != 'macOS'  # Skip this step on macOS
         shell: bash
