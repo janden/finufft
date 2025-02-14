@@ -45,6 +45,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
       - name: Build finufft wheels
+        shell: bash
         run: |
           python -m pip wheel python/finufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
@@ -59,6 +60,7 @@ jobs:
           cuda: '11.4.0'
       - name: Build cufinufft wheels
         if: runner.os != 'macOS'  # Skip this step on macOS
+        shell: bash
         run: |
           python -m pip wheel python/cufinufft/ --wheel-dir=wheelhouse \
             -C cmake.define.CMAKE_BUILD_TYPE=Release \
