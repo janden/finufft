@@ -51,10 +51,11 @@ jobs:
         with:
           package-dir: 'python/finufft'
         env:
-          CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
-          CIBW_ARCHS_LINUX: "x86_64 i686"
+          CIBW_ARCHS_MACOS: "arm64"
+          CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_WINDOWS: "AMD64"
-          CIBW_BUILD_FRONTEND: "pip; args: -C cmake.define.CMAKE_BUILD_TYPE=Release \
+          CIBW_BUILD_FRONTEND: "build; args: --outdir wheelhouse --verbose \
+            -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.CMAKE_C_COMPILER=${{ matrix.toolchain }} \
             -C cmake.define.CMAKE_CXX_COMPILER=${{ matrix.toolchain }} \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
@@ -75,7 +76,8 @@ jobs:
           package-dir: 'python/cufinufft'
         env:
           CIBW_ARCHS: "auto"
-          CIBW_BUILD_FRONTEND: "pip; args: -C cmake.define.CMAKE_BUILD_TYPE=Release \
+          CIBW_BUILD_FRONTEND: "build; args: --outdir wheelhouse --verbose \
+            -C cmake.define.CMAKE_BUILD_TYPE=Release \
             -C cmake.define.CMAKE_C_COMPILER=${{ matrix.toolchain }} \
             -C cmake.define.CMAKE_CXX_COMPILER=${{ matrix.toolchain }} \
             -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
