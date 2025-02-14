@@ -62,8 +62,15 @@ jobs:
         run: |
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 60
+          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 60
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 60
+
           sudo update-alternatives --set gcc /usr/bin/gcc-10
           sudo update-alternatives --set g++ /usr/bin/g++-10
+          sudo update-alternatives --set cc /usr/bin/gcc
+          sudo update-alternatives --set c++ /usr/bin/g++
+          echo "gcc version: $(cc --version)"
+          echo "g++ version: $(c++ --version)"
       - name: install msvc on windows
         if: runner.os == 'Windows'
         uses: aminya/setup-cpp@v1
@@ -90,6 +97,10 @@ jobs:
             -C cmake.define.FINUFFT_USE_DUCC0=OFF \
             -C cmake.define.CMAKE_GENERATOR=Ninja \
             -C cmake.define.CMAKE_GENERATOR_PLATFORM=
+      - name: Delete unnecessary wheels
+        run: |
+          rm -f wheelhouse/*numpy*.whl
+          rm -f wheelhouse/*packaging*.whl
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
