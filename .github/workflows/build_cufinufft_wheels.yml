@@ -39,6 +39,7 @@ jobs:
         uses: Jimver/cuda-toolkit@v0.2.21
         with:
           cuda: '11.4.0'
+          use-github-cache: 'false'
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
