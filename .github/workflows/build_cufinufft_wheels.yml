@@ -41,6 +41,7 @@ jobs:
           cuda: '11.4.0'
           use-github-cache: 'false'
           use-local-cache: 'false'
+          log-file-suffix: '${{ matrix.os }}-${{ matrix.python-version }}'
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
