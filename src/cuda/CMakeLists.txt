@@ -27,6 +27,15 @@ set(CUFINUFFT_INCLUDE_DIRS
     $<TARGET_PROPERTY:CUDA::cufft,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
+function(target_exists TARGET_NAME TARGET_EXISTS)
+    get_property(TARGET_LOCATION TARGET ${TARGET_NAME} LOCATION)
+    if(TARGET_LOCATION)
+        set(${TARGET_EXISTS} TRUE PARENT_SCOPE)
+    else()
+        set(${TARGET_EXISTS} FALSE PARENT_SCOPE)
+    endif()
+endfunction()
+
 set(CUFINUFFT_INCLUDE_DIRS ${CUFINUFFT_INCLUDE_DIRS} PARENT_SCOPE)
 
 # flush denormals to zero and enable verbose PTXAS output
@@ -35,7 +44,6 @@ set(FINUFFT_CUDA_FLAGS
     --extended-lambda
     -ftz=true
     -fmad=true
-    -restrict
     --extra-device-vectorization
     $<$<CONFIG:Debug>:-G
     -maxrregcount
@@ -85,6 +93,17 @@ set_target_properties(
 target_compile_features(cufinufft PRIVATE cxx_std_17)
 target_compile_options(cufinufft PRIVATE ${FINUFFT_CUDA_FLAGS})
 target_link_libraries(cufinufft PUBLIC CUDA::cufft)
+
+target_exists(CUDA::cudart CUFFT_EXISTS)
+
+if(CUFFT_EXISTS)
+    target_link_libraries(cufinufft PUBLIC CUDA::cudart)
+    list(
+        APPEND
+        CUFINUFFT_INCLUDE_DIRS
+        $<TARGET_PROPERTY:CUDA::cudart,INTERFACE_INCLUDE_DIRECTORIES>
+    )
+endif()
 
 file(GLOB CUFINUFFT_PUBLIC_HEADERS "${CMAKE_SOURCE_DIR}/include/cufinufft*.h")
 set_target_properties(
