@@ -85,7 +85,7 @@ target_compile_features(cufinufft PRIVATE cxx_std_17)
 target_compile_options(cufinufft PRIVATE ${FINUFFT_CUDA_FLAGS})
 target_link_libraries(cufinufft PUBLIC CUDA::cufft)
 
-if(TARGET CUDA::cudart)
+if(NOT DEFINED ENV{GITHUB_ACTIONS})
     target_link_libraries(cufinufft PUBLIC CUDA::cudart)
     list(
         APPEND
