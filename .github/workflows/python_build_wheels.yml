@@ -1,0 +1,104 @@
+name: Build and test Python wheels
+
+on: [push, pull_request]
+
+jobs:
+  build_wheels_unix:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, macos-13]
+        include:
+          - os: ubuntu-24.04
+            toolchain: gcc-14
+            arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
+          - os: macos-13
+            toolchain: llvm-19
+            arch_flags: "-mcpu=apple-m3"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.toolchain }}
+          vcvarsall: ${{ contains(matrix.os, 'windows') }}
+          cmake: true
+          ninja: true
+          vcpkg: false
+          cppcheck: false
+          clangtidy: false
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        with:
+          package-dir: 'python/finufft'
+        env:
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          # Need following versions of GCC for compatibility with fftw
+          # installed by homebrew. Similarly, we set the macOS version
+          # for compatibility with those libraries.
+          CIBW_ENVIRONMENT_MACOS: >
+            CC=clang-19
+            CXX=clang-19
+            MACOSX_DEPLOYMENT_TARGET=12
+          CIBW_ENVIRONMENT_LINUX: >
+            CC=gcc-14
+            CXX=g++-14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+
+  build_wheels_macos_arm64:
+    name: Build wheels on macos-14
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        with:
+          package-dir: 'python/finufft'
+        env:
+          CIBW_ARCHS_MACOS: "arm64"
+
+          CIBW_ENVIRONMENT_MACOS: >
+            CC=clang-19
+            CXX=clang-19
+            MACOSX_DEPLOYMENT_TARGET=12
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-macos-arm64
+          path: ./wheelhouse/*.whl
+
+  build_wheels_win:
+    name: Build wheels on windows
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: llvm
+          vcvarsall: ${{ contains(matrix.os, 'windows') }}
+          cmake: true
+          ninja: true
+          vcpkg: false
+          cppcheck: false
+          clangtidy: false
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        with:
+          package-dir: 'python/finufft'
+        env:
+          CIBW_ENVIRONMENT_WINDOWS: >
+            CC=clang
+            CXX=clang++
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-windows
+          path: ./wheelhouse/*.whl

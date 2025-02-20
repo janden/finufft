@@ -1,6 +1,8 @@
 [build-system]
 requires = [
     "scikit-build-core >= 0.4.3",
+    "cmake >= 3.19",
+    "ninja >= 1.9.0",
 ]
 
 build-backend = "scikit_build_core.build"
@@ -9,7 +11,7 @@ build-backend = "scikit_build_core.build"
 name = "finufft"
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = ["numpy >= 1.12.0", "packaging"]
+dependencies = ["numpy >= 1.12.0"]
 authors = [
     {name = "Jeremy Magland"},
     {name = "Daniel Foreman-Mackey"},
@@ -81,11 +83,12 @@ test-command = "pytest {project}/python/finufft/test"
 
 # Ensure that the wheels are compatible with x86-64. Without this, they crash
 # in x86_64 compatibility mode (Rosetta 2) on macOS.
-config-settings = {"cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86-64", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
 
 # TODO: CIBW crashes when we try to make config-settings above into a table. Why?
 
 [tool.cibuildwheel.linux]
+archs = "x86_64"
 before-all = "yum install -y fftw3-devel"
 
 [tool.cibuildwheel.windows]
@@ -99,9 +102,9 @@ repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {w
 # The last setting is required to force cmake to avoid using MSVC (the
 # default). By setting the generator to Ninja, cmake will pick gcc (mingw64) as
 # the compiler.
-config-settings = {"cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86-64", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.args" = "-G Ninja"}
 
 [[tool.cibuildwheel.overrides]]
 select = "*arm64*"
 # Don't enforce x84_64 when building on arm64.
-config-settings = {"cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-mcpu=apple-m3", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}

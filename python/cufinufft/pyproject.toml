@@ -1,6 +1,8 @@
 [build-system]
 requires = [
     "scikit-build-core >= 0.4.3",
+    "cmake >= 3.19",
+    "ninja >= 1.9.0",
 ]
 build-backend = "scikit_build_core.build"
 
@@ -9,7 +11,7 @@ name = "cufinufft"
 description = "Non-uniform fast Fourier transforms on the GPU"
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = ["numpy", "packaging"]
+dependencies = ["numpy"]
 authors = [
     {name = "Yu-shuan Melody Shih"},
     {name = "Garrett Wright"},
