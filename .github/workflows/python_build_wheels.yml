@@ -55,6 +55,7 @@ jobs:
             CXX=$(brew --prefix llvm)/bin/clang++
             CFLAGS="-I$(brew --prefix libomp)/include"
             LDFLAGS="-L$(brew --prefix libomp)/lib"
+            MACOSX_DEPLOYMENT_TARGET=${{ matrix.buildplat[0] == 'macos-14' && '14' || '13' }}
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
       - uses: actions/upload-artifact@v4
         with:
