@@ -104,12 +104,9 @@ repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {w
 # The last setting is required to force cmake to avoid using MSVC (the
 # default). By setting the generator to Ninja, cmake will pick gcc (mingw64) as
 # the compiler.
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.args" = "-G Ninja"}
-
-[tool.cibuildwheel.macos]
-before-build = "brew install llvm libomp && export PATH='$(brew --prefix llvm)/bin:$PATH' && export LDFLAGS='-L$(brew --prefix llvm)/lib' && export CPPFLAGS='-I$(brew --prefix llvm)/include'"
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86-64", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.args" = "-G Ninja"}
 
 [[tool.cibuildwheel.overrides]]
 select = "*arm64*"
 # Don't enforce x84_64 when building on arm64.
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-mcpu=apple-m3", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
