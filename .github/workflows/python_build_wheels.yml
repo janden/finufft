@@ -33,6 +33,16 @@ jobs:
         uses: bus1/cabuild/action/msdevshell@e22aba57d6e74891d059d66501b6b5aed8123c4d  # v1
         with:
           architecture: 'x86'
+      - name: Install dependencies
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          # Here we install the mingw64 versions of gcc and FFTW that we will
+          # use to compile the library. We also need pkg-config so that cmake
+          # can easily find FFTW when configurating the build.
+          c:\msys64\usr\bin\pacman.exe -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw mingw-w64-x86_64-pkgconf
+          # This particular install of mingw64 *is not* in the path by default
+          # (another one at c:\mingw64 is, however), so we add it to the path.
+          echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
       - name: Build wheels ${{ matrix.python }}-${{ matrix.buildplat[1] }}
         uses: pypa/cibuildwheel@v2.22.0
         with:
