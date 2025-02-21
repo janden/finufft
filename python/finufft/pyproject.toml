@@ -106,7 +106,7 @@ repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {w
 # the compiler.
 config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.args" = "-G Ninja"}
 
-[tool.cibuildwheel.linux]
+[tool.cibuildwheel.macos]
 before-build = "brew install llvm libomp && export PATH='$(brew --prefix llvm)/bin:$PATH' && export LDFLAGS='-L$(brew --prefix llvm)/lib' && export CPPFLAGS='-I$(brew --prefix llvm)/include'"
 
 [[tool.cibuildwheel.overrides]]
