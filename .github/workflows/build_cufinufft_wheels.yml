@@ -23,7 +23,7 @@ jobs:
         with:
           package-dir: 'python/cufinufft'
         env:
-          CIBW_ENVIRONMENT: CMAKE_CUDA_ARCHITECTURES=50;60;70;80
+          CIBW_ENVIRONMENT: CMAKE_CUDA_ARCHITECTURES="50;60;70;80"
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
           CIBW_TEST_COMMAND: "echo 'Wheel installed'"
           CIBW_BUILD_FRONTEND: "pip; args: --no-deps"
@@ -38,10 +38,16 @@ jobs:
             fi
           CIBW_ENVIRONMENT_LINUX: PATH=$PATH:/usr/local/cuda/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
           CIBW_BEFORE_ALL_WINDOWS: |
-            Invoke-WebRequest https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe -OutFile cuda_toolkit_windows.exe
-            Start-Process -Wait -FilePath .\cuda_toolkit_windows.exe -ArgumentList "-s cufft_11.4 thrust_11.4 nvcc_11.4 cudart_11.4"
-          CIBW_ENVIRONMENT_WINDOWS: CUDA_PATH='C:\PROGRA~1\NVIDIA~1\CUDA\v11.4'
+            Invoke-WebRequest -UseBasicParsing -Uri https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe -OutFile cuda_toolkit_windows.exe
+            if (-not (Test-Path "cuda_toolkit_windows.exe")) {
+              Write-Host "CUDA installer failed to download."
+              exit 1
+            }
+            Start-Process -Wait -NoNewWindow -FilePath .\cuda_toolkit_windows.exe -ArgumentList "-s cufft_11.4 thrust_11.4 nvcc_11.4 cudart_11.4"
+          CIBW_ENVIRONMENT_WINDOWS: >
+            CUDA_PATH="C:\PROGRA~1\NVIDIA~1\CUDA\v11.4"
           CIBW_ARCHS_LINUX: x86_64
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
