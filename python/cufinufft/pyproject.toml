@@ -78,12 +78,10 @@ input = "cufinufft/__init__.py"
 # Necessary to see build output from the actual compilation
 build-verbosity = 1
 skip = "cp36-* cp37-* cp-38* pp37-* *-manylinux_i686 *_ppc64le *_s390x *_universal2"
-config-settings = {"cmake.define.CMAKE_CUDA_ARCHITECTURES" = "50;60;70;80", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+
 [tool.cibuildwheel.linux]
 manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
-musllinux-x86_64-image = "musllinux_1_2"
-
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
