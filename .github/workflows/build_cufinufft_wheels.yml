@@ -26,7 +26,6 @@ jobs:
         with:
           package-dir: 'python/cufinufft'
         env:
-          CIBW_ENVIRONMENT: CMAKE_CUDA_ARCHITECTURES="50;60;70;80"
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
           CIBW_TEST_COMMAND: "echo 'Wheel installed'"
           CIBW_BUILD_FRONTEND: "pip; args: --no-deps"

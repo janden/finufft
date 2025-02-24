@@ -65,12 +65,6 @@ set(FINUFFT_FFTW_SUFFIX
     CACHE STRING
     "Suffix for FFTW libraries (e.g. OpenMP, Threads etc.)"
 )
-# if FINUFFT_USE_CUDA is OFF, the following options are ignored
-set(FINUFFT_CUDA_ARCHITECTURES
-    ""
-    CACHE STRING
-    "CUDA architectures to build for (e.g. 60;70;75;) defaults to native"
-)
 # if FINUFFT_USE_CPU is OFF, the following options are ignored
 set(FINUFFT_ARCH_FLAGS
     "native"
@@ -405,20 +399,8 @@ if(FINUFFT_USE_CPU)
 endif()
 
 if(FINUFFT_USE_CUDA)
-    if(FINUFFT_CUDA_ARCHITECTURES STREQUAL "")
-        if(DEFINED CMAKE_CUDA_ARCHITECTURES)
-            set(FINUFFT_CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}")
-        else()
-            set(FINUFFT_CUDA_ARCHITECTURES "native")
-            set(CMAKE_CUDA_ARCHITECTURES ${FINUFFT_CUDA_ARCHITECTURES})
-            message(
-                "FINUFFT WARNING: No CUDA architecture supplied via '-DFINUFFT_CUDA_ARCHITECTURES=...', defaulting to 'native'"
-            )
-            message(
-                "See: https://developer.nvidia.com/cuda-gpus for more details on what architecture to supply."
-            )
-        endif()
-        set(CMAKE_CUDA_ARCHITECTURES ${FINUFFT_CUDA_ARCHITECTURES})
+    if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+        set(CMAKE_CUDA_ARCHITECTURES native)
     endif()
     enable_language(CUDA)
     find_package(CUDAToolkit REQUIRED)
