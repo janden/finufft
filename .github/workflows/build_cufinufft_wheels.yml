@@ -11,7 +11,6 @@ jobs:
       matrix:
         buildplat:
           - [ ubuntu-22.04, manylinux_x86_64 ]
-          - [ ubuntu-22.04, musllinux_x86_64 ]
           - [ windows-2019, win_amd64 ]
         python: [ "cp310", "cp311", "cp312", "cp313" ] # exclude pp313t for now
     steps:
@@ -41,22 +40,13 @@ jobs:
               yum install -y epel-release
               yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo
               yum install -y cuda-11-4
-            elif command -v apt &> /dev/null; then
-              apt update
-              apt install -y software-properties-common
-              wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb
-              dpkg -i cuda-keyring_1.0-1_all.deb
-              apt update
-              apt install -y cuda-11-4
             else
               echo "Unsupported package manager. Exiting."
               exit 1
             fi
           CIBW_BEFORE_ALL_WINDOWS: >
-            $cuda_installer = "https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe"
-            $cuda_installer_path = "$env:TEMP\cuda_installer.exe"
-            Invoke-WebRequest -Uri $cuda_installer -OutFile $cuda_installer_path
-            Start-Process -FilePath $cuda_installer_path -ArgumentList "-s" -NoNewWindow -Wait
+            powershell -Command "Invoke-WebRequest https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe -OutFile .\cuda_setup.exe"
+            start /wait .\cuda_setup.exe -s
           CIBW_ARCHS_LINUX: x86_64
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
           CIBW_TEST_COMMAND: "echo 'Wheel installed'"
