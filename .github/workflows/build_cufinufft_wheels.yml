@@ -15,12 +15,10 @@ jobs:
         python: [ "cp310", "cp311", "cp312", "cp313" ] # exclude pp313t for now
     steps:
       - uses: actions/checkout@v4
-        with:
-          arch: x64
       - uses: ilammy/msvc-dev-cmd@v1
       - name: Setup CUDA
         if: ${{ matrix.buildplat[0] == 'windows-2019' }}
-        uses: Jimver/cuda-toolkit@master
+        uses: Jimver/cuda-toolkit@v0.2.21
         with:
           cuda: '11.4.0'
       - name: Build wheels ${{ matrix.python }}-${{ matrix.buildplat[1] }}
