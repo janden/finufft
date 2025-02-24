@@ -53,7 +53,7 @@ jobs:
               exit 1
             fi
           CIBW_BEFORE_ALL_WINDOWS: >
-            $cuda_installer = "https://developer.download.nvidia.com/compute/cuda/11.4.2/network_installers/cuda_11.4.2_windows_network.exe"
+            $cuda_installer = "https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe"
             $cuda_installer_path = "$env:TEMP\cuda_installer.exe"
             Invoke-WebRequest -Uri $cuda_installer -OutFile $cuda_installer_path
             Start-Process -FilePath $cuda_installer_path -ArgumentList "-s" -NoNewWindow -Wait
