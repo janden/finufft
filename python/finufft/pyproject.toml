@@ -41,7 +41,7 @@ build-dir = "build/{wheel_tag}"
 cmake.source-dir = "../../"
 cmake.targets = ["finufft"]
 cmake.define = {"FINUFFT_BUILD_PYTHON" = "ON"}
-
+cmake.args = ["-G Ninja"]
 wheel.packages = ["finufft"]
 
 # Indicate that we don't depend on the CPython API
@@ -103,14 +103,7 @@ before-build = "pip install delvewheel"
 # CIBW doesn't do vendoring of DLLs on Windows by default, so we have to
 # install delvewheel and run it.
 repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {wheel}"
-# Need to repeat this here as the platform-specific config-settings overwrite
-# the general ones.
-# The last setting is required to force cmake to avoid using MSVC (the
-# default). By setting the generator to Ninja, cmake will pick gcc (mingw64) as
-# the compiler.
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86-64", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.args" = "-G Ninja"}
-
-[[tool.cibuildwheel.overrides]]
+[tool.cibuildwheel.overrides]
 select = "*arm64*"
 # Don't enforce x84_64 when building on arm64.
 config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}

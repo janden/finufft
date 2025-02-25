@@ -41,7 +41,7 @@ build-dir = "build/{wheel_tag}"
 cmake.source-dir = "../../"
 cmake.targets = ["cufinufft"]
 cmake.define = {"FINUFFT_BUILD_PYTHON" = "ON", "FINUFFT_USE_CUDA" = "ON", "FINUFFT_USE_CPU" = "OFF", "FINUFFT_ARCH_FLAGS" = ""}
-
+cmake.args = ["-G Ninja"]
 wheel.packages = ["cufinufft"]
 
 # Indicate that we don't depend on the CPython API
@@ -78,6 +78,7 @@ input = "cufinufft/__init__.py"
 # Necessary to see build output from the actual compilation
 build-verbosity = 1
 skip = "cp36-* cp37-* cp-38* pp37-* *-manylinux_i686 *_ppc64le *_s390x *_universal2"
+config-settings = {"cmake.define.CMAKE_CUDA_ARCHITECTURES" = "50;60;70;80"}
 
 [tool.cibuildwheel.linux]
 manylinux-x86_64-image = "manylinux2014"
@@ -88,6 +89,3 @@ before-build = "pip install delvewheel"
 # CIBW doesn't do vendoring of DLLs on Windows by default, so we have to
 # install delvewheel and run it.
 repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {wheel}"
-# build for multiple cuda architectures
-[tool.cibuildwheel.config-settings]
-"cmake.define.CMAKE_CUDA_ARCHITECTURES" = "50;60;70;80"
