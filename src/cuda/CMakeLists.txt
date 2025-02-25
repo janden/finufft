@@ -70,6 +70,13 @@ set_target_properties(
     PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}"
 )
 
+if(DEFINED CIBUILDWHEEL)
+    set(CUDA_LINK_TYPE Shared)
+    message(STATUS RUNNING FROM CIBUILDWHEEL)
+else()
+    set(CUDA_LINK_TYPE Static)
+endif()
+
 set_target_properties(
     cufinufft
     PROPERTIES
@@ -79,7 +86,7 @@ set_target_properties(
         CUDA_STANDARD_REQUIRED ON
         WINDOWS_EXPORT_ALL_SYMBOLS ON
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
-        CUDA_RUNTIME_LIBRARY Static
+        CUDA_RUNTIME_LIBRARY ${CUDA_LINK_TYPE}
 )
 target_compile_features(cufinufft PRIVATE cxx_std_17)
 target_compile_options(cufinufft PRIVATE ${FINUFFT_CUDA_FLAGS})

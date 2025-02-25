@@ -12,7 +12,7 @@ jobs:
         buildplat:
           - [ ubuntu-22.04, manylinux_x86_64 ]
           - [ windows-2019, win_amd64 ]
-        python: [ "cp310", "cp311", "cp312", "cp313" ] # exclude pp313t for now
+        python: [ "cp38", "cp39", "cp310", "cp311", "cp312", "cp313" ] # exclude pp313t for now
     steps:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
