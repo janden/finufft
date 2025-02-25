@@ -409,7 +409,6 @@ if(FINUFFT_USE_CUDA)
         add_subdirectory(perftest/cuda)
         add_subdirectory(test/cuda)
     endif()
-
     list(APPEND INSTALL_TARGETS cufinufft)
 endif()
 
@@ -467,10 +466,6 @@ message(STATUS "  FINUFFT_FFTW_LIBRARIES: ${FINUFFT_FFTW_LIBRARIES}")
 message(STATUS "  FINUFFT_ARCH_FLAGS: ${FINUFFT_ARCH_FLAGS}")
 message(STATUS "  FINUFFT_USE_DUCC0: ${FINUFFT_USE_DUCC0}")
 if(FINUFFT_USE_CUDA)
-    message(
-        STATUS
-        "  FINUFFT_CUDA_ARCHITECTURES: ${FINUFFT_CUDA_ARCHITECTURES}"
-    )
     message(STATUS "  CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")
 endif()
 # cmake-format: on
