@@ -25,6 +25,7 @@ set(CUFINUFFT_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/contrib
     $<TARGET_PROPERTY:CUDA::cufft,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:CUDA::cudart,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
 set(CUFINUFFT_INCLUDE_DIRS ${CUFINUFFT_INCLUDE_DIRS} PARENT_SCOPE)
@@ -91,15 +92,6 @@ set_target_properties(
 target_compile_features(cufinufft PRIVATE cxx_std_17)
 target_compile_options(cufinufft PRIVATE ${FINUFFT_CUDA_FLAGS})
 target_link_libraries(cufinufft PUBLIC CUDA::cufft)
-
-if(NOT DEFINED ENV{GITHUB_ACTIONS})
-    target_link_libraries(cufinufft PUBLIC CUDA::cudart)
-    list(
-        APPEND
-        CUFINUFFT_INCLUDE_DIRS
-        $<TARGET_PROPERTY:CUDA::cudart,INTERFACE_INCLUDE_DIRECTORIES>
-    )
-endif()
 
 file(GLOB CUFINUFFT_PUBLIC_HEADERS "${CMAKE_SOURCE_DIR}/include/cufinufft*.h")
 set_target_properties(
