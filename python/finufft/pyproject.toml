@@ -92,6 +92,15 @@ manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
 musllinux-x86_64-image = "musllinux_1_2"
 
+[[tool.cibuildwheel.overrides]]
+select = "cp39-*"
+# Use manylinux2014 for Python 3.9 to get GCC 10
+manylinux-x86_64-image = "manylinux2014"
+
+[[tool.cibuildwheel.overrides]]
+select = "cp310-*"
+# Use manylinux_2_28 for Python 3.10 to get GCC 14
+manylinux-x86_64-image = "manylinux_2_28"
 
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
