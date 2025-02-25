@@ -91,7 +91,7 @@ set_target_properties(
 )
 target_compile_features(cufinufft PRIVATE cxx_std_17)
 target_compile_options(cufinufft PRIVATE ${FINUFFT_CUDA_FLAGS})
-target_link_libraries(cufinufft PUBLIC CUDA::cufft)
+target_link_libraries(cufinufft PUBLIC CUDA::cufft CUDA::cudart)
 
 file(GLOB CUFINUFFT_PUBLIC_HEADERS "${CMAKE_SOURCE_DIR}/include/cufinufft*.h")
 set_target_properties(
