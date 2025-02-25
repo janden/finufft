@@ -1,67 +1,49 @@
-name: Build finufft wheels
+name: Build and test Python wheels
 
-# testing only should be commented out in the final version
-on: [push, pull_request]
-# this is the release version
-#on:
-#  push:
-#    tags:
-#      - 'v*'  # Push events to matching v*, i.e. v1.0, v20.15.10
+on: [ push, pull_request ]
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Build finufft wheels on ${{ matrix.buildplat[0] }}
+    runs-on: ${{ matrix.buildplat[0] }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-13, windows-2022]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        include:
-          - os: ubuntu-22.04
-            toolchain: gcc
-            arch_flags: "-march=x86-64" # probably -march=x86-64_v2 is safe
-          - os: macos-13
-            toolchain: llvm
-            arch_flags: "-mcpu=apple-m3"
-          - os: windows-2022
-            toolchain: llvm
-            arch_flags: "-march=x86-64-v2" # Windows11 requires avx2 so this should be fine
+        buildplat:
+          - [ ubuntu-22.04, manylinux_x86_64 ]
+          - [ ubuntu-22.04, musllinux_x86_64 ]
+          - [ macos-13, macosx_x86_64 ]
+          - [ macos-14, macosx_arm64 ]
+          - [ windows-2019, win_amd64 ]
+        python: [ "cp311", "cp312", "cp313" ] # exclude pp313t for now
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: ${{ matrix.toolchain }}
-          vcvarsall: ${{ contains(matrix.os, 'windows') }}
-          cmake: true
-          ninja: true
-          vcpkg: false
-          cppcheck: false
-          clangtidy: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "${{ matrix.python-version }}"
       - name: Install dependencies
+        if: ${{ runner.os == 'Windows' }}
         run: |
-          python -m pip install --upgrade pip
-      - name: Build finufft wheels
-        shell: bash
-        run: |
-          python -m pip wheel python/finufft/ --verbose --wheel-dir=wheelhouse \
-            -C cmake.define.CMAKE_BUILD_TYPE=Release \
-            -C cmake.define.FINUFFT_ARCH_FLAGS=${{ matrix.arch_flags }} \
-            -C cmake.define.FINUFFT_USE_DUCC0=OFF \
-            -C cmake.define.CMAKE_GENERATOR=Ninja \
-            -C cmake.define.CMAKE_GENERATOR_PLATFORM=
-      - name: Delete unnecessary wheels
-        shell: bash
-        run: |
-          rm -f wheelhouse/*numpy*.whl
-          rm -f wheelhouse/*packaging*.whl
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+          # Here we install the mingw64 versions of gcc and FFTW that we will
+          # use to compile the library. We also need pkg-config so that cmake
+          # can easily find FFTW when configurating the build.
+          c:\msys64\usr\bin\pacman.exe -Sy --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-fftw mingw-w64-x86_64-pkgconf
+          # This particular install of mingw64 *is not* in the path by default
+          # (another one at c:\mingw64 is, however), so we add it to the path.
+          echo "c:\msys64\mingw64\bin;" >> $env:GITHUB_PATH
+      - name: Build wheels ${{ matrix.python }}-${{ matrix.buildplat[1] }}
+        uses: pypa/cibuildwheel@v2.22.0
         with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          package-dir: 'python/finufft'
+        env:
+          CIBW_ARCHS_LINUX: x86_64
+          CIBW_BEFORE_ALL_MACOS: |
+            brew install llvm libomp
+          CIBW_ENVIRONMENT_MACOS: >
+            CC=$(brew --prefix llvm)/bin/clang
+            CXX=$(brew --prefix llvm)/bin/clang++
+            CFLAGS="-I$(brew --prefix libomp)/include"
+            LDFLAGS="-L$(brew --prefix libomp)/lib"
+            MACOSX_DEPLOYMENT_TARGET=${{ matrix.buildplat[0] == 'macos-14' && '14' || '13' }}
+          CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
           path: ./wheelhouse/*.whl
