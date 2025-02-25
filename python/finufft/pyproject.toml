@@ -92,18 +92,18 @@ manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
 musllinux-x86_64-image = "musllinux_1_1"
 
-[[tool.cibuildwheel.overrides]]
-select = "cp310-*"
-# Use manylinux_2_28 for Python 3.10 to get GCC 14
-manylinux-x86_64-image = "manylinux_2_28"
-musllinux-x86_64-image = "musllinux_1_2"
-
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
 # CIBW doesn't do vendoring of DLLs on Windows by default, so we have to
 # install delvewheel and run it.
 repair-wheel-command = "delvewheel repair -v --analyze-existing -w {dest_dir} {wheel}"
-[tool.cibuildwheel.overrides]
+
+[[tool.cibuildwheel.overrides]]
+select = "cp310-*"
+manylinux-x86_64-image = "manylinux_2_28"
+musllinux-x86_64-image = "musllinux_1_2"
+
+# Override for ARM64 builds
+[[tool.cibuildwheel.overrides]]
 select = "*arm64*"
-# Don't enforce x84_64 when building on arm64.
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON"}
+config-settings = { "cmake.define.FINUFFT_ARCH_FLAGS" = "", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON" }

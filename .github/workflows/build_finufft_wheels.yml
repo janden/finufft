@@ -7,7 +7,7 @@ jobs:
     name: Build finufft wheels on ${{ matrix.buildplat[0] }}
     runs-on: ${{ matrix.buildplat[0] }}
     strategy:
-      fail-fast: false
+#      fail-fast: false
       matrix:
         buildplat:
           - [ ubuntu-22.04, manylinux_x86_64 ]
