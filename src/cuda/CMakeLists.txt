@@ -56,9 +56,9 @@ set_target_properties(
 target_compile_features(cufinufft PRIVATE cxx_std_17)
 target_compile_options(cufinufft PRIVATE ${FINUFFT_CUDA_FLAGS})
 if(WIN32 OR (BUILD_TESTING AND FINUFFT_BUILD_TESTS) OR CIBUILDWHEEL)
-    target_link_libraries(cufinufft PRIVATE CUDA::cufft CUDA::cudart)
+    target_link_libraries(cufinufft PUBLIC CUDA::cufft CUDA::cudart)
 else()
-    target_link_libraries(cufinufft PRIVATE CUDA::cudart_static CUDA::cufft_static)
+    target_link_libraries(cufinufft PUBLIC CUDA::cudart_static CUDA::cufft_static)
 endif()
 
 # disable deprecated warnings for tests if supported
