@@ -30,14 +30,12 @@ jobs:
           CIBW_TEST_COMMAND: "echo 'Wheel installed'"
           CIBW_BUILD_FRONTEND: "pip; args: --no-deps"
           CIBW_BEFORE_ALL_LINUX: |
-            if command -v yum &> /dev/null; then
-              yum install -y epel-release
-              yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo
-              yum install -y cuda-11-4
-            else
-              echo "Unsupported package manager. Exiting."
-              exit 1
-            fi
+            # See: https://stackoverflow.com/questions/77197213/cibuildwheel-and-cuda
+            yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo
+            rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/D42D0685.pub
+            yum clean all
+            yum -y install cuda-toolkit-11-4
+            /usr/local/cuda/bin/nvcc --version
           CIBW_ENVIRONMENT_LINUX: PATH=$PATH:/usr/local/cuda/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
           CIBW_ARCHS_LINUX: x86_64
 
