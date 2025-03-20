@@ -46,7 +46,7 @@ wheel_name=$(docker exec ${image_name} bash -c 'ls /io/wheelhouse/cufinufft-*-li
 echo "# Repair the wheels"
 docker exec ${image_name} \
     python3 -m auditwheel repair \
-    --exclude 'libcudart*.so' 'libcufft*.so' \
+    --exclude libcufft-058fdf74.so.10.4.1.152 --exclude libcudart-72c5e614.so.11.2.152 \
     ${wheel_name} \
     --plat manylinux2014_x86_64 \
     --wheel-dir /io/wheelhouse/
