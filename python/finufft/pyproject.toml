@@ -83,7 +83,7 @@ test-command = "pytest {project}/python/finufft/test"
 
 # Ensure that the wheels are compatible with x86-64. Without this, they crash
 # in x86_64 compatibility mode (Rosetta 2) on macOS.
-config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86_64 -fno-avx2 -fno-avx512 -fno-sse4", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.define.CMAKE_BUILD_TYPE" = "Debug", "cmake.define.FINUFFT_ENABLE_SANITIZERS" = "ON"}
+config-settings = {"cmake.define.FINUFFT_ARCH_FLAGS" = "-march=x86_64 -fno-sse2", "cmake.define.CMAKE_VERBOSE_MAKEFILE" = "ON", "cmake.define.CMAKE_BUILD_TYPE" = "Debug", "cmake.define.FINUFFT_ENABLE_SANITIZERS" = "ON"}
 
 # TODO: CIBW crashes when we try to make config-settings above into a table. Why?
 
